@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Мой ландшафт (client_base.html){% endblock
+        %}</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/shop_style.css') }}">
+</head>
+<body>
+    <div class="logo-wrapper">
+        <a href="#" class="logo">Мой ландшафт</a>
+        <!--<img src="{{ url_for('static', filename='images/hz.jfif') }}"
+              alt="icon" class="logo-img">-->
+    </div>
+
+    <header class="navbar">
+        <div class="container">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('client.index') }}"
+                           class="nav-link-item">Главная</a></li>
+                    <li><a href="{{ url_for('client.catalog') }}" class="nav-link-item">Каталог</a></li>
+{#                    <li><a href="{{ url_for('client.gallery') }}"
+                            class="nav-link-item">Галерея</a></li> #}
+{#                    <li><a href="{{ url_for('client.contacts') }}"
+                            class="nav-link-item">Контакты</a></li>#}
+                    <li><a href="#" class="nav-link-item">Галерея</a></li>
+                    <li><a href="#" class="nav-link-item">Контакты</a></li>
+
+                    <li class="nav-actions">
+                        <!-- КОРЗИНА -->
+                        <a href="#" class="nav-link-item">
+                            🛒 <span id="cart-count" class="cart-badge">0</span>
+                        </a>
+                        {% if session.get('user_id') %}
+                            <span class="nav-welcome">Привет, {{ session.get('user_name') }}!</span>
+                            <a href="{{ url_for('auth.logout') }}" class="nav-link-item logout-btn">Выход</a>
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="nav-link-item">Войти</a>
+                            <a href="{{ url_for('auth.register') }}" class="nav-link-item">Регистрация</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <!-- Блок уведомлений на весь проект -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p class="footer-copy">
+                &copy; 2026 <span class="footer-brand">Мой ландшафт</span>. Все права защищены.
+            </p>
+
+            <!--Кнопка админа появится только при наличии прав-->
+            {% if session.get('role') == 'admin' %}
+                <p>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn-admin">⚙️ Управление сайтом</a>
+                </p>
+            {% endif %}
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{# Указываем путь к базе, так как index лежит глубже в папке client #}
+{% extends "client_base.html" %}
+
+{% block title %}Главная — Мой ландшафт{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-text">
+        <h1>Создайте сад своей мечты</h1>
+        <p>Качественные растения и материалы для вашего участка в одном месте.</p>
+        {# Заглушка для будущей витрины #}
+        <a href="{{ url_for('client.catalog') }}" class="btn-main">Посмотреть товары</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-item">
+        <h3>🌱 Растения</h3>
+        <p>Из лучших питомников региона</p>
+    </div>
+    <div class="feature-item">
+        <h3>🏗️ Материалы</h3>
+        <p>Натуральный камень и декор</p>
+    </div>
+    <div class="feature-item">
+        <h3>🎨 Дизайн</h3>
+        <p>Профессиональные проекты садов</p>
+    </div>
+</section>
+{% endblock %}

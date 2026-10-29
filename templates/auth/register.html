@@ -1,0 +1,86 @@
+{% extends "client_base.html" %}
+
+{% block title %}Регистрация — Мой ландшафт{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2>Регистрация нового клиента</h2>
+        <p class="auth-subtitle">Для получения полного доступа к сайту<br>
+            пожалуйста пройдите регистрацию
+        </p>
+
+        <form action="{{ url_for('auth.register') }}" method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="full_name">Полное имя</label>
+                <input type="text" id="full_name" name="full_name" placeholder="Иван Иванов" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Электронная почта</label>
+                <input type="email" id="email" name="email" placeholder="example@mail.ru" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" name="phone"
+                       placeholder="+7 (___) ___-__-__" required>
+            </div>
+
+            <div class="form-group password-group">
+                <label for="password">Пароль</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Минимум 6 символов" required>
+                    <span id="togglePassword" class="password-toggle">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Создать аккаунт</button>
+        </form>
+
+        <div class="auth-footer">
+            Уже есть аккаунт? <a href="{{ url_for('auth.login') }}" class="auth-link">Войти</a>
+        </div>
+    </div>
+</div>
+
+<!-- Маска телефона -->
+<script>
+const phoneInput = document.getElementById('phone');
+
+phoneInput.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, ''); // Удаляем всё, кроме цифр
+    if (value.startsWith('7') || value.startsWith('8')) value = value.substring(1);
+
+    let result = '+7 ';
+    if (value.length > 0) result += '(' + value.substring(0, 3);
+    if (value.length > 3) result += ') ' + value.substring(3, 6);
+    if (value.length > 6) result += '-' + value.substring(6, 8);
+    if (value.length > 8) result += '-' + value.substring(8, 10);
+
+    e.target.value = result;
+});
+
+// Блокируем удаление "+7 "
+phoneInput.addEventListener('keydown', (e) => {
+    if (e.target.selectionStart < 4 && (e.key === 'Backspace' || e.key === 'Delete')) {
+        e.preventDefault();
+    }
+});
+</script>
+
+<!-- Этот код будет менять тип поля с password на text и обратно: -->
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function (e) {
+        // Переключаем тип атрибута
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        // Меняем иконку (опционально)
+        this.textContent = type === 'password' ? '👁️' : '🙈';
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Админка — Мой ландшафт{% endblock %}</title>
+    <!-- Подключаем ваш основной CSS (кнопки, шрифты и алерты пригодятся) -->
+    <!--<link rel="stylesheet"
+           href="{{ url_for('static', filename='css/admin_style.css') }}">-->
+    <!-- Сначала общие стили (для алертов и кнопок) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shop_style.css') }}">
+    <!-- Затем специфические стили админки -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_style.css') }}">
+
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <!-- Боковое меню -->
+        <aside class="admin-sidebar">
+            <h3>Мой ландшафт-Админ</h3>
+            <ul class="admin-nav">
+                <li><a href="#">📊 Статистика</a></li>
+                <li><a href="{{ url_for('admin.products_list') }}">📦 Список товаров</a></li>
+                <li><a href="{{ url_for('admin.add_product_route') }}">➕ Добавить товар</a></li>
+                <li><a href="#">📝 Заказы</a></li>
+                <li><a href="#">👥 Клиенты</a></li>
+                <hr style="opacity: 0.2; margin: 20px 0;">
+                <li><a href="{{ url_for('client.index') }}">🏠 На сайт</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" style="color: #ff6b6b;">🚪 Выход</a></li>
+            </ul>
+        </aside>
+
+        <!-- Основная часть -->
+        <main class="admin-content">
+            <!-- Шапка контента (хлебные крошки или статус) -->
+            <div class="admin-header">
+                <h2>{% block header_title %}Панель управления{% endblock %}</h2>
+                <div class="admin-user-info">
+                    Администратор: <strong>{{ session.get('user_name') }}</strong>
+                </div>
+            </div>
+
+            <!-- Блок для уведомлений (Flash) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <!-- Сюда будут вставляться конкретные страницы админки -->
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+</body>
+</html>

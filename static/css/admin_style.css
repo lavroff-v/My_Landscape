@@ -1,0 +1,253 @@
+
+
+/* Общие настройки админки */
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ================================================================== */
+/* admin_base.html */
+/* ================================================================== */
+
+.admin-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+/* Боковая панель (Sidebar) */
+.admin-sidebar {
+    width: 260px;
+    background-color: #212529; /* Почти черный */
+    color: #fff;
+    padding: 25px 15px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.admin-sidebar h3 {
+    color: #ffc107;
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 15px;
+}
+
+.admin-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-nav li {
+    margin-bottom: 8px;
+}
+
+.admin-nav a {
+    color: #ced4da;
+    text-decoration: none;
+    display: block;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.admin-nav a:hover {
+    background-color: #343a40;
+    color: #fff;
+    padding-left: 20px; /* Эффект сдвига при наведении */
+}
+
+/* Контентная область */
+.admin-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.admin-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+/* Карточки в админке */
+.admin-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    border-top: 4px solid #5AA55A; /* Зеленый акцент вашего бренда */
+}
+
+/* ================================================================== */
+/* СТИЛИ ДЛЯ ТАБЛИЦ И СПИСКОВ В АДМИНКЕ */
+/* templates/admin/products.html */
+/* ================================================================== */
+
+/* 1. Общий контейнер таблицы */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+}
+
+/* 2. Шапка и ячейки */
+.admin-table thead tr {
+    background-color: #f4f7f6;
+    text-align: left;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #f1f3f5; /* Подсветка при наведении */
+}
+
+/* 3. Миниатюра фотографии товара */
+.product-img-mini {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    display: block;
+}
+
+/* 4. Статусы (В наличии / Нет) */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+}
+.status-on { background: #d4edda; color: #155724; }  /* Зеленый */
+.status-off { background: #f8d7da; color: #721c24; } /* Красный */
+
+/* 5. Кнопки действий (Изменить/Удалить) */
+.btn-edit {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 15px;
+    font-weight: bold;
+}
+.btn-delete {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* 6. Вспомогательные классы */
+.d-flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.empty-list-msg {
+    text-align: center;
+    color: #666;
+    padding: 40px;
+    font-style: italic;
+}
+
+/* ================================================================== */
+/* СТИЛИ ДЛЯ ФАЙЛА */
+/* templates/admin/add_product.html */
+/* ================================================================== */
+
+/* Специальный класс для центрирования и ограничения ширины формы */
+.admin-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Сетка для формы добавления товара */
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+/* Контейнер для широких полей (описание) */
+.form-group-full {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.form-group-full label {
+    font-weight: bold;
+    color: #4a5d4e;
+    font-size: 0.9rem;
+}
+
+.form-group-full textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    min-height: 120px;
+    box-sizing: border-box;
+}
+
+/* Стилизация выпадающих списков и полей выбора файла */
+.admin-card select,
+.admin-card input[type="file"] {
+    flex: 1;
+    height: 32px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 0.9rem;
+}
+
+/* Контейнер для кнопок внизу формы */
+.admin-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.admin-actions .btn-primary { flex: 2; }
+.admin-actions .btn-secondary {
+    flex: 1;
+    text-align: center;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 8px;
+    font-weight: bold;
+}

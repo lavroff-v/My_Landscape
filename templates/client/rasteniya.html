@@ -1,0 +1,11 @@
+{# Указываем путь к базе, так как index лежит глубже в папке client #}
+{% extends "client_base.html" %}
+
+{% block title %}Растения — Мой ландшафт{% endblock %}
+
+{% block content %}
+
+    <a href="{{ url_for('client.rasteniya') }}" class="btn-main">Однолетние
+        цветы</a>
+
+{% endblock %}

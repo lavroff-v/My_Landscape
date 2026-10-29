@@ -1,0 +1,17 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Рабочий стол — Админка{% endblock %}
+
+{% block header_title %}Обзор магазина{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <h3>Добро пожаловать, {{ session.get('user_name') }}!</h3>
+    <p>Это главная страница панели управления. Отсюда вы можете:</p>
+    <ul>
+        <li>Управлять списком товаров</li>
+        <li>Просматривать заказы клиентов</li>
+        <li>Редактировать профили пользователей</li>
+    </ul>
+</div>
+{% endblock %}

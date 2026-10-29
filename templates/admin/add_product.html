@@ -1,0 +1,98 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Добавить товар — Админка{% endblock %}
+{% block header_title %}Новый товар{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="admin-form-container"> <!-- Обертка для узкой формы -->
+        <form action="{{ url_for('admin.add_product_route') }}" method="POST" enctype="multipart/form-data" class="auth-form">
+
+        <!-- Все поля теперь идут одно за другим -->
+        <div class="form-group">
+            <label for="name">Название товара</label>
+            <input type="text" id="name" name="name" placeholder="Например: Туя Смарагд" required>
+        </div>
+
+        <div class="form-group">
+            <label for="brand">Бренд / Питомник</label>
+            <input type="text" id="brand" name="brand" placeholder="Эко-Сад">
+        </div>
+
+        <div class="form-group">
+            <label for="category">Категория</label>
+            <select name="category" id="category">
+                <option value="Хвойные">Хвойные</option>
+                <option value="Лиственные">Лиственные</option>
+                <option value="Однолетники">Однолетние цветы</option>
+                <option value="Многолетники">Многолетние цветы</option>
+                <option value="Грунт">Грунт</option>
+                <option value="Декор">Декор</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Цена (₽)</label>
+            <input type="number" step="0.01" id="price" name="price" placeholder="0.00" required>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Количество</label>
+            <input type="number" step="0.1" id="quantity" name="quantity" placeholder="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="unit">Ед. измерения</label>
+            <select name="unit" id="unit">
+                <option value="шт.">шт.</option>
+                <option value="кг">кг</option>
+                <option value="м²">м²</option>
+                <option value="упак.">упак.</option>
+            </select>
+        </div>
+
+        <!-- Блок фото с превью -->
+        <div class="form-group">
+            <label for="image">Фотография</label>
+            <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)">
+        </div>
+
+        <div id="image-preview-container" style="display: none; margin: 10px 0 20px 130px;">
+            <img id="image-preview" src="#" alt="Превью" style="max-width: 150px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+
+        <!-- Описание -->
+        <div class="form-group-full">
+            <label for="description">Описание товара</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="admin-actions">
+            <button type="submit" class="btn-primary">💾 Сохранить товар</button>
+            <a href="{{ url_for('admin.products_list') }}" class="btn-secondary">Отмена</a>
+        </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const container = document.getElementById('image-preview-container');
+    const preview = document.getElementById('image-preview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            container.style.display = 'block'; // Показываем блок
+        }
+
+        reader.readAsDataURL(input.files[0]); // Читаем первый выбранный файл
+    } else {
+        container.style.display = 'none'; // Прячем, если файл не выбран
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,357 @@
+**********************
+это мой app.py :
+
+from flask import Flask
+from db_config import Config
+from client.routes import client
+from auth.routes import auth  # Импортируем Blueprint
+# Другие импорты (auth, admin)...
+
+app = Flask(__name__)
+app.config.from_object(Config)
+
+# Теперь настройки доступны через app.config['DB_CONFIG']
+# Регистрируем Blueprint
+app.register_blueprint(client)
+app.register_blueprint(auth, url_prefix='/auth') # Все ссылки auth будут начинаться с /auth/
+
+if __name__ == '__main__':
+    app.run(debug=True)
+**********************
+
+**********************
+это мой client\routes.py :
+
+from flask import Blueprint, render_template
+
+
+# Создаем Blueprint для клиента
+client = Blueprint('client', __name__)
+
+# Главная страница (Лендинг: о магазине, акции, контакты)
+@client.route('/')
+def base():
+    return render_template('client_base.html')
+**********************
+
+**********************
+это мой auth\routes.py :
+
+from flask import Blueprint, render_template
+
+
+# Создаем Blueprint для клиента
+auth = Blueprint('auth', __name__)
+
+# Главная страница (Лендинг: о магазине, акции, контакты)
+@auth.route('/register')
+def register():
+    return render_template('auth/register.html')
+**********************
+
+**********************
+это мой db_config.py :
+
+import os
+
+
+class Config:
+    # Тот самый ключ, который вы сгенерировали
+    SECRET_KEY = os.environ.get('SECRET_KEY') or '2a6a6f3faac51a8ce0f55a925865eed7f1db3a15e326c0821adbe96454244562'
+
+    # Параметры подключения к PostgreSQL
+    DB_CONFIG = {
+        "host": "localhost",
+        "database": "my_landscape",
+        "user": "postgres",
+        "password": "529529",
+        "port": "5432"
+    }
+
+    # Настройки для загрузки изображений (пригодится для товаров)
+    UPLOAD_FOLDER = os.path.join('static', 'uploads')
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # Лимит 16 МБ на фото
+**********************
+
+**********************
+это мой db_scripts.py :
+
+import psycopg2
+from psycopg2 import sql
+
+
+# ======================================================================
+#   Создание БД my_landscape
+# ======================================================================
+
+def create_database(db_name, user, password, host="127.0.0.1"):
+    """Создает базу данных, если она еще не существует."""
+    conn = psycopg2.connect(dbname="postgres", user=user, password=password,
+                            host=host)
+    conn.autocommit = True
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
+        print(f"База '{db_name}' создана.")
+    except psycopg2.errors.DuplicateDatabase:
+        print(f"База '{db_name}' уже существует.")
+    finally:
+        cur.close()
+        conn.close()
+
+
+# ======================================================================
+#   Создание таблицы пользователей.
+# ======================================================================
+
+def create_table_users():
+    """Создает таблицу пользователей с поддержкой ролей."""
+    query = """
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        -- 'client' по умолчанию, 'staff' для персонала, 'admin' для тебя
+        role VARCHAR(20) NOT NULL DEFAULT 'client', 
+        phone VARCHAR(20),
+        address TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+    try:
+        with psycopg2.connect(**DB_CONFIG) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                return "Таблица пользователей успешно создана/проверена."
+    except Exception as e:
+        return f"Ошибка при создании таблицы юзеров: {e}"
+
+
+if __name__ == "__main__":
+
+
+    create_database("my_landscape", "postgres", "529529")
+    print(create_table_users())
+**********************
+
+**********************
+это мой client\base.html :
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Мой ландшафт{% endblock %}</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/shop_style.css') }}">
+</head>
+<body>
+    <div class="logo-wrapper">
+        <a href="#" class="logo">Мой ландшафт</a>
+        <img src="{{ url_for('static', filename='images/hz.jfif') }}" alt="icon" class="logo-img">
+    </div>
+
+    <header class="navbar">
+        <div class="container">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link-item">Главная</a></li>
+                    <li><a href="#" class="nav-link-item">Витрина</a></li>
+                    <li><a href="#" class="nav-link-item">Галерея</a></li>
+                    <li><a href="#" class="nav-link-item">Контакты</a></li>
+
+                    <li class="nav-actions">
+                        <!-- КОРЗИНА -->
+                        <a href="#" class="nav-link-item">
+                            🛒 <span id="cart-count" class="cart-badge">{{ cart_count }}</span>
+                        </a>
+
+                        {# Временно оставляем только гостевые кнопки для чистоты дизайна #}
+                        {# {% if session.get('user_id') %} #}
+                            <!-- <a href="#" class="nav-link-item">👤 {{ session.get('user_name') }}</a> -->
+                            <!-- <a href="#" class="nav-link-item">Выход</a> -->
+                        {# {% else %} #}
+                            <a href="#" class="nav-link-item">Войти</a>
+                            <a href="#" class="nav-link-item">Регистрация</a>
+                        {# {% endif %} #}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        {# Блок для уведомлений (Flash-сообщения) можно раскомментировать, когда добавим стили .alert в CSS #}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p class="footer-copy">
+                &copy; 2026 <span class="footer-brand">Мой ландшафт</span>. Все права защищены.
+            </p>
+
+            {# Кнопка админа появится только при наличии прав #}
+            {# {% if session.get('role') == 'admin' %} #}
+                <p>
+                    <a href="#" class="btn-admin">⚙️ Управление сайтом</a>
+                </p>
+            {# {% endif %} #}
+        </div>
+    </footer>
+</body>
+</html>
+**********************
+
+**********************
+это мой shop_style.css :
+
+/* 1. БАЗОВЫЕ НАСТРОЙКИ (Ваши старые) */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #E2E7D6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* 2. ШАПКА И ЛОГО (Ваши старые) */
+.navbar {
+    width: calc(100% - 20px);
+    margin: 0 auto 30px auto;
+    border-radius: 15px;
+    background-color: #5AA55A;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 50px;
+}
+
+.logo {
+    font-size: 3.0rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #006600;
+}
+
+.logo-img {
+    height: 100px;
+    width: auto;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center; /* Чтобы всё было в одну линию */
+    margin: 0;
+    padding: 0;
+    gap: 25px;
+}
+
+/* 3. НОВЫЕ КЛАССЫ (Которые мы добавили вместо инлайн-стилей) */
+.nav-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-link-item {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-link-item:hover {
+    color: #ffc107;
+}
+
+.cart-badge {
+    background: #ffc107;
+    color: #000;
+    padding: 2px 7px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.btn-admin {
+    color: #2d5a27;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid #2d5a27;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: rgba(45, 90, 39, 0.05);
+    transition: 0.3s;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-admin:hover {
+    background-color: #5AA55A;
+    color: #ffc107;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-copy {
+    color: #4a5d4e;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    opacity: 0.8;
+}
+
+.footer-brand {
+    color: #2d5a27;
+    font-weight: bold;
+}
+
+Продолжим ?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
