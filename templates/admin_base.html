@@ -21,13 +21,15 @@
             <h3>Мой ландшафт-Админ</h3>
             <ul class="admin-nav">
                 <li><a href="#">📊 Статистика</a></li>
-                <li><a href="{{ url_for('admin.products_list') }}">📦 Список товаров</a></li>
-                <li><a href="{{ url_for('admin.add_product_route') }}">➕ Добавить товар</a></li>
+{#                <li><a href="{{ url_for('admin.products_list') }}">📦 Список
+                товаров</a></li> #}
+{#                <li><a href="{{ url_for('admin.add_product_route') }}">➕
+                Добавить товар</a></li> #}
                 <li><a href="#">📝 Заказы</a></li>
                 <li><a href="#">👥 Клиенты</a></li>
                 <hr style="opacity: 0.2; margin: 20px 0;">
                 <li><a href="{{ url_for('client.index') }}">🏠 На сайт</a></li>
-                <li><a href="{{ url_for('auth.logout') }}" style="color: #ff6b6b;">🚪 Выход</a></li>
+                <li><a href="#" style="color: #ff6b6b;">🚪 Выход</a></li>
             </ul>
         </aside>
 
