@@ -1,9 +1,10 @@
 from flask import (Blueprint, render_template, session, redirect, url_for,
                    flash, request)
+from repositories.products import (get_all_products, add_product_to_db)
 import os
 from werkzeug.utils import secure_filename
 from flask import current_app # чтобы достать путь к папке загрузок
-#from db_scripts import add_product
+
 
 admin = Blueprint('admin', __name__)
 
@@ -24,11 +25,11 @@ def login():
     return render_template('admin/login.html')
 
 
-@admin.route('/logout')
-def logout():
-    session.pop('is_admin', None)
-    flash('Вы вышли из админки', 'info')
-    return redirect(url_for('client.index'))
+# @admin.route('/logout')
+# def logout():
+#     session.pop('is_admin', None)
+#     flash('Вы вышли из админки', 'info')
+#     return redirect(url_for('client.index'))
 
 
 @admin.route('/')
@@ -45,12 +46,49 @@ def products_list():
     # Проверяем, авторизован ли пользователь
     if not session.get('is_admin'):
         return redirect(url_for('admin.login'))
-
+    all_products = get_all_products()
     # Пока просто рендерим шаблон (он у вас уже есть в папке admin)
-    return render_template('admin/products.html')
+    return render_template('admin/products.html', products=all_products)
 
 
-#     *****  СТАРАЯ АДИНКА  *****
+@admin.route('/add_product', methods=['GET', 'POST'])
+def add_product_route():
+    if not session.get('is_admin'):
+        return redirect(url_for('admin.login'))
+
+    if request.method == 'POST':
+        # 1. Получаем данные из формы
+        name = request.form.get('name')
+        brand = request.form.get('brand')
+        category = request.form.get('category')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        quantity = request.form.get('quantity')
+        unit = request.form.get('unit')
+
+        # 2. Обрабатываем картинку
+        image = request.files.get('image')
+        image_url = None
+
+        if image and image.filename != '':
+            filename = secure_filename(image.filename)
+            filepath = os.path.join('static', 'uploads', filename)
+            image.save(filepath)
+            image_url = filename
+
+        # 3. Вызываем функцию из репозитория!
+        add_product_to_db(
+            name=name, brand=brand, category=category, description=description,
+            price=price, quantity=quantity, unit=unit, image_url=image_url
+        )
+
+        flash('Товар успешно добавлен!', 'success')
+        return redirect(url_for('admin.products_list'))
+
+    return render_template('admin/add_product.html')
+
+
+#     *****  СТАРАЯ АДМИНКА  *****
 # @admin.before_request
 # def restrict_admin_access():
 #     # Проверяем роль перед выполнением любого запроса в админке

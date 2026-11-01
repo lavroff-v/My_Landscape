@@ -35,3 +35,21 @@ def get_all_products(category_filter=None):
     except Exception as e:
         print(f"Ошибка при получении товаров: {e}")
         return []
+
+def add_product_to_db(name, brand, category, description, price, quantity, unit, image_url=None):
+    """Добавляет новый товар в базу данных."""
+    query = """
+        INSERT INTO products (name, brand, category, description, price, quantity, unit, image_url)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id;
+    """
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (name, brand, category, description, price, quantity, unit, image_url))
+                new_id = cursor.fetchone()[0]
+                conn.commit() # Фиксируем изменения в БД
+                return new_id
+    except Exception as e:
+        print(f"Ошибка при добавлении товара: {e}")
+        return None
