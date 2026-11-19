@@ -1,3 +1,6 @@
 db_config.py
-static/uploads/
+static/uploads/*
+!static/uploads/.gitkeep
+static/images/*
+!static/images/.gitkeep
 __pycache__/
