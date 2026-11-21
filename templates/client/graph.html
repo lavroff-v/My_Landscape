@@ -1,0 +1,158 @@
+{# Указываем путь к базе, так как index лежит глубже в папке client #}
+{% extends "client_base.html" %}
+
+{% block title %}Лёва и Граф — Мой ландшафт{% endblock %}
+
+{% block content %}
+        {#<h1>Страница ** "Лёва и Граф" ** пока в разработке.....</h1>#}
+
+	<!-- ИСПРАВЛЕНО: Блок стилей перенесен СЮДА, внутрь тега <head> -->
+	<style type="text/css">
+		body {
+			/* Наложение полупрозрачного белого цвета (0.8 — это 80% белого, картинка будет едва видна) */
+			/*background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(230, 200, 130, 0.6)),
+			            url("gymnasium.jpg") no-repeat center center fixed;
+
+			background-size: cover;*/ /* Растягивает картинку на весь экран без искажений */
+			/*margin: 0;
+			padding: 0;*/
+			background-color: #C9A227;
+			background: linear-gradient(rgba(201, 162, 39, 0.1), rgba(201, 162, 39, 0.7))
+			             no-repeat center center fixed;
+
+			background-size: cover; /* Растягивает картинку на весь экран без искажений */
+			margin: 0;
+			padding: 0;
+		}
+
+		/* Стили для центрирования содержимого в main */
+		main {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			min-height: 100vh; /* Опционально: растянет main на всю высоту экрана */
+			justify-content: center; /* Опционально: отцентрирует элементы еще и по вертикали */
+		}
+
+		/* Первый span (класс обучения) */
+		h3 span {
+			color: #E34234;        /* Китайский красный / Киноварь (Cinnabar) */
+			font-weight: normal;   /* Обычный вес шрифта */
+			padding: 2px 5px;      /* Небольшие внутренние отступы */
+		}
+
+		img {
+			width: auto;  /* Автоматически подбирает ширину, сохраняя пропорции */
+			height: 250px;  /* Задаем нужную высоту в пикселях */
+			border-radius: 8px; /* Красиво скруглим углы у фото */
+		}
+
+		/* 2. Новый контейнер для горизонтального ряда */
+		.gallery {
+			display: flex;           /* Ставит карточки в один ряд */
+			justify-content: center; /* Выравнивает ряд по центру */
+			gap: 30px;               /* Расстояние между фотографиями */
+			margin-top: 25px;        /* Отступ от верхней рамки с заголовком */
+		}
+
+		/* 3. Карточка для одной пары «фото + подпись» */
+		.photo-card {
+			display: flex;
+			flex-direction: column;  /* Ставит подпись строго под фото */
+			align-items: center;     /* Центрирует салатовую плашку под картинкой */
+		}
+
+		/* 2. НОВЫЕ стили для блока с подписью под фотографией */
+		.photo-caption {
+			display: inline-block;
+			max-width: 400px;     /* Ограничили ширину текста, чтобы длинный набор букв не растягивался во весь экран */
+			color: #555555;       /* Серый цвет текста */
+			font-style: italic;   /* Курсивный шрифт */
+			font-size: 1.1rem;    /* Чуть крупнее обычного */
+			background-color: #98FB98;  /* Салатовый фон */
+			letter-spacing: 1px;  /* Небольшое расстояние между буквами */
+			padding: 10px;        /* Внутренние отступы, чтобы текст не прилипал к краям фона */
+			margin-top: 15px;     /* Отступ сверху от картинки */
+			border-radius: 6px;   /* Скругление углов салатовой плашки */
+		}
+
+		/* Теперь это правило работает идеально! */
+		h1, h3 {
+			/*color: #FF8C69;*/
+			/*color: #E0533C;*/
+			/*color: #CD4A32;*/ /* Пряная терракота / Томатный коралл */
+			color: #E34234; /* Китайский красный / Киноварь (Cinnabar) */
+		}
+
+		/* Контейнер для двух картинок */
+		.hover-box {
+			position: relative;
+			display: inline-block;
+			height: 250px; /* Высота как у ваших картинок */
+		}
+
+		/* Вторая картинка лежит ровно поверх первой, но пока невидима */
+		.hover-box .img-second {
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity: 0; /* Полностью прозрачна */
+			transition: opacity 0.4s ease; /* Плавная смена за 0.4 секунды */
+		}
+
+		/* При наведении курсора вторая картинка становится видимой */
+		.hover-box:hover .img-second {
+			opacity: 1;
+		}
+	</style>
+
+
+{#<body
+		style="background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(230, 200, 130, 0.6)),
+			            url('gymnasium.jpg') no-repeat center center fixed; background-size: cover; margin: 0;padding: 0;">#}
+	<main>
+		<div style="width: 600px; border: 5px double #E34234; border-radius: 16px; margin-bottom: 10px; background-color: #98FB98;">
+			<h1>ГИМНАЗИЯ № 84 г.ОМСК</h1>
+			<h3>
+				Разработал: Просвиряков Лев <strong>&nbsp&nbsp&nbsp5 "А" класс</strong>
+			</h3>
+		</div>
+		<div class="gallery">
+			<div class="photo-card">
+				<img src="/static/images/my_house.jpg" alt="Это мой дом" title="Это мой дом">
+				<div class="photo-caption">
+					<strong>Это мой дом...</strong><br>
+				</div>
+			</div>
+			<div class="photo-card">
+				<img src="/static/images/gymnasium.jpg" alt="Это моя школа" title="Это моя школа">
+				<div class="photo-caption">
+					<strong>Это моя школа...</strong><br>
+				</div>
+			</div>
+			<div class="photo-card">
+				<div class="hover-box">
+					<img src="/static/images/Graph.jpeg" alt="Это Граф" title="Это Граф">
+					<img src="/static/images/Graph_2.jpeg" alt="И это Граф" title="И это Граф"
+						class="img-second">
+				</div>
+				<div class="photo-caption">
+					<strong>Это Граф...</strong><br>
+				</div>
+			</div>
+			<div class="photo-card">
+				<img src="/static/images/It_is_me.jpeg" alt="А это я" title="А это я">
+				<div class="photo-caption">
+					<strong>А это я...</strong><br>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer>
+
+	</footer>
+{#</body>#}
+
+{% endblock %}

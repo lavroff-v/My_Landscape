@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, \
     flash, session
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash  # Импортируем проверку пароля
-#from db_scripts import add_user, get_user_by_email
+from db_scripts import add_user, get_user_by_email
 
 auth = Blueprint('auth', __name__)
 
@@ -59,7 +59,11 @@ def login():
 
                 flash(f"Здравствуйте {full_name}! Рады видеть вас снова! ",
                       "success")
-                return redirect(url_for('client.index'))
+                # Перенаправляем в зависимости от роли
+                if role == 'admin':
+                    return redirect(url_for('admin.dashboard'))
+                else:
+                    return redirect(url_for('client.index'))
             else:
                 # Пароль неверный
                 flash("Неверный пароль. Попробуйте еще раз.", "danger")

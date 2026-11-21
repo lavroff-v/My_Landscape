@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2 import sql, extras
 from db_config import Config
+from werkzeug.security import generate_password_hash
 
 
 # ======================================================================
@@ -83,49 +84,49 @@ def create_table_products():
     except Exception as e:
         return f"Ошибка при создании таблицы товаров: {e}"
 
-#
-# # ======================================================================
-# #   Добавляет нового пользователя в базу данных.
-# # ======================================================================
-#
-# def add_user(full_name, email, phone, password_hash):
-#     """Добавляет нового пользователя в базу данных."""
-#     query = """
-#     INSERT INTO users (full_name, email, phone, password_hash)
-#     VALUES (%s, %s, %s, %s)
-#     RETURNING id;
-#     """
-#     try:
-#         # Используем ваш DB_CONFIG из db_config.py
-#         with psycopg2.connect(**Config.DB_CONFIG) as conn:
-#             with conn.cursor() as cursor:
-#                 cursor.execute(query, (full_name, email, phone, password_hash))
-#                 user_id = cursor.fetchone()[0]
-#                 conn.commit()
-#                 return user_id # Возвращаем ID нового юзера
-#     except psycopg2.errors.UniqueViolation:
-#         return "exists" # Специальный флаг, если email уже занят
-#     except Exception as e:
-#         print(f"Ошибка БД: {e}")
-#         return None
-#
-#
-# # ======================================================================
-# #   Функция поиска пользователя в базе данных по Email.
-# # ======================================================================
-#
-# def get_user_by_email(email):
-#     """Ищет пользователя в базе по Email."""
-#     query = "SELECT id, full_name, password_hash, role FROM users WHERE email = %s;"
-#     try:
-#         with psycopg2.connect(**Config.DB_CONFIG) as conn:
-#             with conn.cursor() as cursor:
-#                 cursor.execute(query, (email,))
-#                 user = cursor.fetchone()
-#                 return user  # Вернет кортеж (id, name, hash, role) или None, если не найден
-#     except Exception as e:
-#         print(f"Ошибка при поиске пользователя: {e}")
-#         return None
+
+# ======================================================================
+#   Добавляет нового пользователя в базу данных.
+# ======================================================================
+
+def add_user(full_name, email, phone, password_hash):
+    """Добавляет нового пользователя в базу данных."""
+    query = """
+    INSERT INTO users (full_name, email, phone, password_hash)
+    VALUES (%s, %s, %s, %s)
+    RETURNING id;
+    """
+    try:
+        # Используем ваш DB_CONFIG из db_config.py
+        with psycopg2.connect(**Config.DB_CONFIG) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (full_name, email, phone, password_hash))
+                user_id = cursor.fetchone()[0]
+                conn.commit()
+                return user_id # Возвращаем ID нового юзера
+    except psycopg2.errors.UniqueViolation:
+        return "exists" # Специальный флаг, если email уже занят
+    except Exception as e:
+        print(f"Ошибка БД: {e}")
+        return None
+
+
+# ======================================================================
+#   Функция поиска пользователя в базе данных по Email.
+# ======================================================================
+
+def get_user_by_email(email):
+    """Ищет пользователя в базе по Email."""
+    query = "SELECT id, full_name, password_hash, role FROM users WHERE email = %s;"
+    try:
+        with psycopg2.connect(**Config.DB_CONFIG) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (email,))
+                user = cursor.fetchone()
+                return user  # Вернет кортеж (id, name, hash, role) или None, если не найден
+    except Exception as e:
+        print(f"Ошибка при поиске пользователя: {e}")
+        return None
 
 # # ======================================================================
 # #   Добавление нового товара в базу данных
@@ -191,11 +192,39 @@ def insert_test_products():
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
+def create_admin():
+    """Создает учетную запись главного администратора из настроек Config."""
+    admin_email = Config.ADMIN_EMAIL
+    admin_password = Config.ADMIN_PASSWORD
+    admin_name = "Администратор"
+
+    if not admin_email or not admin_password:
+        print("ВНИМАНИЕ: ADMIN_EMAIL или ADMIN_PASSWORD не заданы в файле .env!")
+        return
+
+    hashed_pw = generate_password_hash(admin_password)
+
+    query = """
+    INSERT INTO users (full_name, email, password_hash, role)
+    VALUES (%s, %s, %s, 'admin')
+    ON CONFLICT (email) DO NOTHING;
+    """
+    try:
+        with psycopg2.connect(**Config.DB_CONFIG) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (admin_name, admin_email, hashed_pw))
+                conn.commit()
+                print("Проверка/создание администратора успешно выполнены.")
+    except Exception as e:
+        print(f"Ошибка при создании администратора: {e}")
+
+
 
 if __name__ == "__main__":
 
 
-    create_database("my_landscape", "postgres", "529529")
-    print(create_table_users())
-    print(create_table_products())
-    print(insert_test_products())
+    # create_database("my_landscape", "postgres", "529529")
+    # print(create_table_users())
+    # print(create_table_products())
+    # print(insert_test_products())
+    print(create_admin())

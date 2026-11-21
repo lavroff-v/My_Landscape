@@ -20,14 +20,30 @@
             <nav>
                 <ul class="nav-links">
                     <li><a href="{{ url_for('client.index') }}"
-                           class="nav-link-item">Главная</a></li>
-                    <li><a href="{{ url_for('client.catalog') }}" class="nav-link-item">Каталог</a></li>
-{#                    <li><a href="{{ url_for('client.gallery') }}"
-                            class="nav-link-item">Галерея</a></li> #}
-{#                    <li><a href="{{ url_for('client.contacts') }}"
-                            class="nav-link-item">Контакты</a></li>#}
-                    <li><a href="#" class="nav-link-item">Галерея</a></li>
-                    <li><a href="#" class="nav-link-item">Контакты</a></li>
+                           class="nav-link-item {% if request.endpoint ==
+                           'client.index' %}active{% endif %}">
+                           Главная</a>
+                    </li>
+                    <li><a href="{{ url_for('client.catalog') }}"
+                           class="nav-link-item {% if request.endpoint ==
+                           'client.catalog' %}active{% endif %}">
+                           Каталог</a>
+                    </li>
+                    <li><a href="{{ url_for('client.gallery') }}"
+                           class="nav-link-item {% if request.endpoint ==
+                           'client.gallery' %}active{% endif %}">
+                           Галерея</a>
+                    </li>
+                    <li><a href="{{ url_for('client.contacts') }}"
+                           class="nav-link-item {% if request.endpoint ==
+                           'client.contacts' %}active{% endif %}">
+                           Контакты</a>
+                    </li>
+                    <li><a href="{{ url_for('client.graph') }}"
+                           class="nav-link-item {% if request.endpoint ==
+                           'client.graph' %}active{% endif %}">
+                           Лёва и Граф</a>
+                    </li>
 
                     <li class="nav-actions">
                         <!-- КОРЗИНА -->
@@ -38,8 +54,14 @@
                             <span class="nav-welcome">Привет, {{ session.get('user_name') }}!</span>
                             <a href="{{ url_for('auth.logout') }}" class="nav-link-item logout-btn">Выход</a>
                         {% else %}
-                            <a href="{{ url_for('auth.login') }}" class="nav-link-item">Войти</a>
-                            <a href="{{ url_for('auth.register') }}" class="nav-link-item">Регистрация</a>
+                            <a href="{{ url_for('auth.login') }}"
+                               class="nav-link-item {% if request.endpoint ==
+                               'auth.login' %}active{% endif%}">Войти
+                            </a>
+                            <a href="{{ url_for('auth.register') }}"
+                               class="nav-link-item {% if request.endpoint ==
+                               'auth.register' %}active{% endif %}">Регистрация
+                            </a>
                         {% endif %}
                     </li>
                 </ul>

@@ -8,35 +8,38 @@ from flask import current_app # чтобы достать путь к папке
 
 admin = Blueprint('admin', __name__)
 
+
+@admin.before_request
+def check_admin_access():
+    """Срабатывает автоматически перед ЛЮБЫМ маршрутом внутри Blueprint admin."""
+    if session.get('role') != 'admin':
+        flash("Доступ запрещен. Требуются права администратора. Ха-ха",
+              "danger")
+        return redirect(url_for('auth.login'))
+
 # Временный пароль для входа (позже заменим на проверку из БД)
-ADMIN_PASSWORD = "admin123"
+#ADMIN_PASSWORD = "admin123"
 
 
-@admin.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        password = request.form.get('password')
-        if password == ADMIN_PASSWORD:
-            session['is_admin'] = True
-            flash('Вы успешно вошли в админку!', 'success')
-            return redirect(url_for('admin.dashboard'))
-        else:
-            flash('Неверный пароль', 'danger')
-    return render_template('admin/login.html')
-
-
-# @admin.route('/logout')
-# def logout():
-#     session.pop('is_admin', None)
-#     flash('Вы вышли из админки', 'info')
-#     return redirect(url_for('client.index'))
+# @admin.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         password = request.form.get('password')
+#         if password == ADMIN_PASSWORD:
+#             session['is_admin'] = True
+#             flash('Вы успешно вошли в админку!', 'success')
+#             return redirect(url_for('admin.dashboard'))
+#         else:
+#             flash('Неверный пароль', 'danger')
+#     return render_template('admin/login.html')
 
 
 @admin.route('/')
 def dashboard():
-    # Проверяем, авторизован ли пользователь
-    if not session.get('is_admin'):
-        return redirect(url_for('admin.login'))
+    # # Проверяем, что пользователь вошел и его роль — 'admin'
+    # if session.get('role') != 'admin':
+    #     flash("Доступ запрещен. Требуются права администратора.", "danger")
+    #     return redirect(url_for('auth.login'))
 
     return render_template('admin/dashboard.html')
 
@@ -148,3 +151,10 @@ def add_product_route():
 #             flash("Ошибка при добавлении товара в базу.", "danger")
 #
 #     return render_template('admin/add_product.html')
+
+
+# @admin.route('/logout')
+# def logout():
+#     session.pop('is_admin', None)
+#     flash('Вы вышли из админки', 'info')
+#     return redirect(url_for('client.index'))

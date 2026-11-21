@@ -7,7 +7,7 @@ try:
 
     # TRUNCATE полностью очищает таблицу.
     # RESTART IDENTITY сбросит счетчики ID (автоинкремент) в ноль.
-    truncate_query = "TRUNCATE TABLE products RESTART IDENTITY CASCADE;"
+    truncate_query = "TRUNCATE TABLE users RESTART IDENTITY CASCADE;"
 
     cursor.execute(truncate_query)
     conn.commit()

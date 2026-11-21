@@ -3,4 +3,6 @@ static/uploads/*
 !static/uploads/.gitkeep
 static/images/*
 !static/images/.gitkeep
+.venv/
+.env
 __pycache__/
